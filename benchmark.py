@@ -61,14 +61,14 @@ class Benchmark(object):
         :return: n * i matrix of random points, a n-long vector of labels corresponding to the 
                  first set of points, and the decision boundary weight vector.
         """
-        d_from_gamma = lambda x, w: np.abs(np.dot(x, w[1:]) + w[0]) / (len(w) - 1)
+        d_from_db = lambda x, w: np.abs(np.dot(x, w[1:]) + w[0]) / (len(w) - 1)
         theta = lambda x, w: 1 if np.dot(w[1:], x) + w[0] > 0 else -1
 
         # Generate our decision boundary (w_star). Scale appropriately.
         w_star = np.append([0], (Benchmark.random_vector(i) * scale))
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_gamma(a, w_star) > gamma, i,
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, w_star) > gamma, i,
                                         scale)
 
         # We classify each point given w_star. Perform for each point in D.
@@ -88,7 +88,7 @@ class Benchmark(object):
         :return: n * 2 matrix of random points, a n-long vector of labels corresponding to the 
                  first set of points, and the decision boundary Shapely curve.
         """
-        d_from_gamma = lambda x, b_line: Point(x[0], x[1]).distance(b_line)
+        d_from_db = lambda x, b_line: Point(x[0], x[1]).distance(b_line)
         evaluate_p = lambda i, b_hat: sum([(i * b_hat[a]) ** (degree - a) for a in
                                            range(0, degree)])
         theta = lambda x, b_hat: 1 if evaluate_p(x[0], b_hat) < x[1] else -1
@@ -100,7 +100,7 @@ class Benchmark(object):
                               range(-Benchmark.GCP, Benchmark.GCP)])
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_gamma(a, b_curve) > gamma,
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_curve) > gamma,
                                         scale=scale)
 
         # We classify each point given decision boundary. Perform for each point in D.
@@ -120,7 +120,7 @@ class Benchmark(object):
         :return: n * 2 matrix of random points, a n-long vector of labels corresponding to the 
                  first set of points, and the decision ellipse Shapely shape.
         """
-        d_from_gamma = lambda x, b_shape: Point(x[0], x[1]).distance(b_shape.exterior)
+        d_from_db = lambda x, b_shape: Point(x[0], x[1]).distance(b_shape.exterior)
         theta = lambda x, b_shape: 1 if Point(x[0], x[1]).within(b_shape) else -1
 
         # Generate our decision ellipse. b[0], b[1] = ellipse center. b[2], b[3] = a, b terms.
@@ -131,7 +131,7 @@ class Benchmark(object):
         b_ellipse = b_circle if circle else shapely.affinity.scale(b_circle, b[2], b[3])
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_gamma(a, b_ellipse) > gamma,
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_ellipse) > gamma,
                                         scale=scale)
 
         # We classify each point given decision boundary. Perform for each point in D.
@@ -150,7 +150,7 @@ class Benchmark(object):
         :return: n * 2 matrix of random points, a n-long vector of labels corresponding to the 
                  first set of points, and the decision rectangle Shapely polygon.
         """
-        d_from_gamma = lambda x, b_shape: Point(x[0], x[1]).distance(b_shape.exterior)
+        d_from_db = lambda x, b_shape: Point(x[0], x[1]).distance(b_shape.exterior)
         theta = lambda x, b_shape: 1 if Point(x[0], x[1]).within(b_shape) else -1
 
         # Generate our decision rectangle. b[0:1] = upper right, b[2:3] = bottom left
@@ -158,7 +158,7 @@ class Benchmark(object):
         b_rectangle = Polygon([[b[0], b[1]], [b[0], b[3]], [b[2], b[3]], [b[2], b[1]]])
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_gamma(a, b_rectangle) > gamma,
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_rectangle) > gamma,
                                         scale=scale)
 
         # We classify each point given decision boundary. Perform for each point in D.
