@@ -51,7 +51,7 @@ class Visualize(object):
         xx, yy = np.meshgrid(np.arange(d_hat[:,0].min() - 1, d_hat[:,0].max() + 1, Visualize.SSM),
                              np.arange(d_hat[:,1].min() - 1, d_hat[:,1].max() + 1, Visualize.SSM))
 
-        # Plot the classifying line.
+        # Plot classifer.
         z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
         z = z.reshape(xx.shape)
         plt.contourf(xx, yy, z, cmap=plt.cm.coolwarm, alpha=0.8)

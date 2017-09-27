@@ -68,8 +68,7 @@ class Benchmark(object):
         w_star = np.append([0], (Benchmark.random_vector(i) * scale))
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, w_star) > gamma, i,
-                                        scale)
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, w_star), i, scale)
 
         # We classify each point given w_star. Perform for each point in D.
         ell = [theta(x, w_star) for x in d]
@@ -100,8 +99,7 @@ class Benchmark(object):
                               range(-Benchmark.GCP, Benchmark.GCP)])
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_curve) > gamma,
-                                        scale=scale)
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_curve), scale=scale)
 
         # We classify each point given decision boundary. Perform for each point in D.
         ell = [theta(x, b) for x in d]
@@ -124,15 +122,12 @@ class Benchmark(object):
         theta = lambda x, b_shape: 1 if Point(x[0], x[1]).within(b_shape) else -1
 
         # Generate our decision ellipse. b[0], b[1] = ellipse center. b[2], b[3] = a, b terms.
-        b = np.append([0, 0], Benchmark.random_vector(2) * scale)
-
-        np.put(b, [2, 3], [abs(b[2]), abs(b[3])])
+        b = np.append([0, 0], np.abs(Benchmark.random_vector(2) * scale))
         b_circle = Point(b[0], b[1]).buffer(1)
         b_ellipse = b_circle if circle else shapely.affinity.scale(b_circle, b[2], b[3])
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_ellipse) > gamma,
-                                        scale=scale)
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_ellipse), scale=scale)
 
         # We classify each point given decision boundary. Perform for each point in D.
         ell = [theta(x, b_ellipse) for x in d]
@@ -158,8 +153,7 @@ class Benchmark(object):
         b_rectangle = Polygon([[b[0], b[1]], [b[0], b[3]], [b[2], b[3]], [b[2], b[1]]])
 
         # Generate our random points. Gamma condition must be met for each point added.
-        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_rectangle) > gamma,
-                                        scale=scale)
+        d = Benchmark.__d_passing_gamma(n, gamma, lambda a: d_from_db(a, b_rectangle), scale=scale)
 
         # We classify each point given decision boundary. Perform for each point in D.
         ell = [theta(x, b_rectangle) for x in d]
